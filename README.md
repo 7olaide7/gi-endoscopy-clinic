@@ -16,7 +16,7 @@ Then open <http://localhost:8000>.
 
 - `index.html` — page content, SEO metadata, structured data and SVG icon sprite
 - `assets/css/styles.css` — design system, layouts, responsive rules and reduced-motion/print styles
-- `assets/js/main.js` — mobile navigation, scrollspy, FAQ accordion and appointment-request flow
+- `assets/js/main.js` — accessible mobile navigation, scrollspy, FAQ accordion and appointment-request flow
 - `assets/images/` — locally stored, compressed stock-photo placeholders
 
 ## Appointment form behavior
