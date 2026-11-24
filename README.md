@@ -17,7 +17,13 @@ Then open <http://localhost:8000>.
 - `index.html` — page content, SEO metadata, structured data and SVG icon sprite
 - `assets/css/styles.css` — design system, layouts, responsive rules and reduced-motion/print styles
 - `assets/js/main.js` — accessible mobile navigation, scrollspy, FAQ accordion and appointment-request flow
-- `assets/images/` — locally stored, compressed stock-photo placeholders
+- `assets/images/` — locally stored, compressed stock-photo placeholders. The `-640`, `-880`, `-900` and `-1350` files are resized copies of the hero and technology photos, served through `srcset`; when you replace a photo, regenerate them from the new original.
+
+## Maintenance notes
+
+- **In-page anchor offset lives in one place:** `scroll-padding-top` on `html` (header height + 1px). Do not also add `scroll-margin-top` to sections: the two values add together and leave the previous section visible under the header.
+- **`#top` is on `<body>`**, not the sticky header, so the logo link always returns to the very top.
+- **Hero portrait:** the photo, caption plate and equipment chip sit inside `.hero__portrait` so they stay aligned at every width.
 
 ## Appointment form behavior
 

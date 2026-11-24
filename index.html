@@ -122,7 +122,7 @@
   }
   </script>
 </head>
-<body>
+<body id="top">
 
   <a class="skip-link" href="#main">Skip to main content</a>
 
@@ -216,7 +216,7 @@
   </svg>
 
   <!-- Header -->
-  <header class="site-header" id="top">
+  <header class="site-header">
     <div class="container header__inner">
       <a class="brand" href="#top" aria-label="G.I. Endoscopy Clinic &middot; Ado-Ekiti, back to top">
         <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true">
@@ -323,29 +323,33 @@
             </svg>
           </div>
 
-          <div class="hero__frame">
-            <img
-              src="assets/images/hero-doctor.jpg"
-              alt="A smiling doctor in a white coat"
-              width="1100" height="1375"
-              fetchpriority="high"
-              decoding="async">
-          </div>
+          <div class="hero__portrait">
+            <div class="hero__frame">
+              <img
+                src="assets/images/hero-doctor.jpg"
+                srcset="assets/images/hero-doctor-640.jpg 640w, assets/images/hero-doctor-880.jpg 880w, assets/images/hero-doctor.jpg 1100w"
+                sizes="(max-width: 480px) calc(100vw - 90px), 400px"
+                alt="A smiling doctor in a white coat"
+                width="1100" height="1375"
+                fetchpriority="high"
+                decoding="async">
+            </div>
 
-          <div class="hero__card hero__card--tech">
-            <span class="hero__card-icon" aria-hidden="true">
-              <svg class="icon"><use href="#i-scan"></use></svg>
-            </span>
-            <span>
-              <strong>Olympus CV-180</strong>
-              <span>High-definition GI imaging</span>
-            </span>
-          </div>
+            <div class="hero__card hero__card--tech">
+              <span class="hero__card-icon" aria-hidden="true">
+                <svg class="icon"><use href="#i-scan"></use></svg>
+              </span>
+              <span>
+                <strong>Olympus CV-180</strong>
+                <span>High-definition GI imaging</span>
+              </span>
+            </div>
 
-          <figure class="hero__card hero__card--quote">
-            <blockquote>&ldquo;Your wellbeing is our desire.&rdquo;</blockquote>
-            <figcaption>The promise behind our care</figcaption>
-          </figure>
+            <figure class="hero__card hero__card--quote">
+              <blockquote>&ldquo;Your wellbeing is our desire.&rdquo;</blockquote>
+              <figcaption>The promise behind our care</figcaption>
+            </figure>
+          </div>
         </div>
       </div>
     </section>
@@ -578,6 +582,8 @@
           <div class="tech__frame">
             <img
               src="assets/images/endoscopy-suite.jpg"
+              srcset="assets/images/endoscopy-suite-900.jpg 900w, assets/images/endoscopy-suite-1350.jpg 1350w, assets/images/endoscopy-suite.jpg 1800w"
+              sizes="(max-width: 700px) 560px, 660px"
               alt="A clinician holding a modern endoscope beside a high-definition monitor"
               width="1800" height="1200" loading="lazy" decoding="async">
           </div>

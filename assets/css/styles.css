@@ -81,7 +81,11 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--header-h) + 24px);
+  /* The sticky header is --header-h tall plus its 1px bottom border. This is
+     the single place that offsets in-page anchors; do not also set
+     scroll-margin-top on sections, because the two values add together and
+     leave the previous section showing beneath the header. */
+  scroll-padding-top: calc(var(--header-h) + 1px);
   -webkit-text-size-adjust: 100%;
 }
 
@@ -187,9 +191,10 @@ address {
   outline-color: var(--apricot);
 }
 
-section[id],
-div[id="location"] {
-  scroll-margin-top: calc(var(--header-h) + 24px);
+/* Sections already carry their own top padding, so they land flush under the
+   header. The contact card is not a full section, so give it a little air. */
+#location {
+  scroll-margin-top: 24px;
 }
 
 /* 3. Utilities and shared components
@@ -745,26 +750,11 @@ div[id="location"] {
 .hero__media {
   position: relative;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  min-height: 630px;
-  padding: 1.6rem 0;
+  padding: clamp(2rem, 3vw, 2.6rem) clamp(2.2rem, 4.5vw, 3.6rem);
   color: var(--sage);
   isolation: isolate;
-}
-
-.hero__media::before {
-  content: "";
-  position: absolute;
-  right: 2%;
-  bottom: 2%;
-  z-index: 0;
-  width: 76%;
-  height: 76%;
-  border: 1px solid rgba(220, 232, 223, 0.15);
-  border-radius: 230px 230px 28px 28px;
-  transform: rotate(4deg);
-  pointer-events: none;
 }
 
 .hero__rings {
@@ -786,59 +776,61 @@ div[id="location"] {
   height: 100%;
 }
 
-.hero__frame {
+/* The photo, its caption plate and the equipment chip are one unit, so they
+   stay aligned at every width instead of floating independently. */
+.hero__portrait {
   position: relative;
   z-index: 1;
-  width: min(420px, 84%);
+  display: flex;
+  flex-direction: column;
+  width: min(400px, 100%);
+}
+
+.hero__frame {
+  position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 220px 220px 28px 28px;
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
   background: #0a2c27;
-  box-shadow: 0 46px 90px -40px rgba(0, 0, 0, 0.75);
+  box-shadow: 0 46px 90px -50px rgba(0, 0, 0, 0.75);
 }
 
 .hero__frame img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 20%;
-}
-
-.hero__frame::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 62%, rgba(6, 30, 27, 0.38));
-  pointer-events: none;
+  object-position: center 12%;
 }
 
 .hero__card {
-  position: absolute;
-  z-index: 2;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 16px;
-  background: rgba(252, 251, 247, 0.96);
   color: var(--ink);
-  box-shadow: 0 22px 44px -30px rgba(0, 0, 0, 0.62);
-  backdrop-filter: blur(14px);
 }
 
+/* Equipment chip: hangs off the photo's upper-left edge, clear of the face. */
 .hero__card--tech {
-  top: 13%;
-  left: -3%;
+  position: absolute;
+  top: 17%;
+  left: -2.4rem;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  max-width: 238px;
-  padding: 0.75rem 0.9rem;
+  width: max-content;
+  max-width: min(11.75rem, 47%);
+  padding: 0.7rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 16px;
+  background: rgba(252, 251, 247, 0.97);
+  box-shadow: 0 22px 44px -30px rgba(0, 0, 0, 0.62);
 }
 
 .hero__card-icon {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 10px;
   background: var(--apricot-soft);
   color: var(--apricot-ink);
@@ -852,6 +844,7 @@ div[id="location"] {
 
 .hero__card strong {
   display: block;
+  white-space: nowrap;
   color: var(--ink);
   font-family: var(--font-body);
   font-size: 0.79rem;
@@ -867,20 +860,24 @@ div[id="location"] {
   line-height: 1.4;
 }
 
+/* Caption plate: attached under the arch like a mount, so it never covers
+   the doctor's hands or the lower part of the photo. */
 .hero__card--quote {
-  right: -2%;
-  bottom: 4%;
-  max-width: 252px;
+  position: relative;
+  z-index: 1;
   margin: 0;
-  padding: 1rem 1.15rem;
-  border-left: 3px solid var(--apricot);
+  padding: 1rem 1.25rem 1.1rem;
+  border-top: 3px solid var(--apricot);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  background: var(--paper);
+  box-shadow: 0 34px 60px -40px rgba(0, 0, 0, 0.7);
 }
 
 .hero__card--quote blockquote {
   margin: 0;
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: 1.14rem;
+  font-size: 1.2rem;
   font-style: italic;
   font-weight: 400;
   line-height: 1.25;
@@ -888,10 +885,31 @@ div[id="location"] {
 }
 
 .hero__card--quote figcaption {
-  margin-top: 0.35rem;
+  margin-top: 0.3rem;
   color: var(--muted);
-  font-size: 0.66rem;
+  font-size: 0.7rem;
   line-height: 1.4;
+}
+
+/* The container stops growing at 1240px, so on very wide screens a
+   percentage-based panel drifts away from the photo. Anchor it to the centre. */
+@media (min-width: 1500px) {
+  .hero::before {
+    width: calc(50% - 20px);
+  }
+
+  /* Re-centre the portrait inside that wider panel. */
+  .hero__media {
+    --stage-shift: max(0px, calc(25vw - 307px));
+  }
+
+  .hero__portrait {
+    transform: translateX(var(--stage-shift));
+  }
+
+  .hero__rings {
+    left: calc(50% + var(--stage-shift));
+  }
 }
 
 /* Keep the first screen readable immediately, including before fonts and
@@ -2659,35 +2677,16 @@ div[id="location"] {
   }
 
   .hero__media {
-    min-height: 0;
     width: min(680px, 100%);
     margin-inline: auto;
-    padding: 2.2rem 2rem;
+    padding: 2.4rem 2rem;
     border-radius: var(--radius-xl);
     background: var(--forest);
     color: var(--sage);
   }
 
-  .hero__media::before {
-    right: 5%;
-    bottom: 5%;
-    height: 70%;
-  }
-
-  .hero__frame {
-    width: min(400px, 80%);
-  }
-
   .hero__rings {
     width: min(620px, 115%);
-  }
-
-  .hero__card--tech {
-    left: 0.5rem;
-  }
-
-  .hero__card--quote {
-    right: 0.5rem;
   }
 
   .about__grid,
@@ -2901,29 +2900,30 @@ div[id="location"] {
   }
 
   .hero__media {
-    padding: 1.8rem 1.2rem;
+    padding: 1.4rem 1.2rem 1.6rem;
   }
 
-  .hero__frame {
-    width: min(360px, 82%);
+  /* On phones the equipment chip becomes a header row above the photo,
+     rather than overlapping a portrait that is already small. */
+  .hero__portrait {
+    width: min(360px, 100%);
   }
 
   .hero__card--tech {
-    top: 8%;
-    left: 0;
-    max-width: 214px;
-    padding: 0.65rem 0.75rem;
+    position: static;
+    order: -1;
+    max-width: none;
+    width: auto;
+    margin-bottom: 0.9rem;
+    padding: 0.6rem 0.8rem;
   }
 
   .hero__card--quote {
-    right: 0;
-    bottom: 3%;
-    max-width: 214px;
-    padding: 0.8rem 0.9rem;
+    padding: 0.85rem 1.05rem 0.95rem;
   }
 
   .hero__card--quote blockquote {
-    font-size: 1rem;
+    font-size: 1.08rem;
   }
 
   .about__media {
@@ -3023,28 +3023,9 @@ div[id="location"] {
     height: 40px;
   }
 
-  .hero__card--tech {
-    top: 5%;
-    left: -0.2rem;
-    max-width: 192px;
-  }
-
-  .hero__card--quote {
-    right: -0.2rem;
-    max-width: 192px;
-  }
-
   .hero__card-icon {
     width: 34px;
     height: 34px;
-  }
-
-  .hero__card strong {
-    font-size: 0.74rem;
-  }
-
-  .hero__card--tech span span {
-    font-size: 0.62rem;
   }
 
   .step {

@@ -82,7 +82,9 @@
 
   if (nav && navToggle) {
     var mobileQuery = window.matchMedia("(max-width: 1024px)");
-    nav.setAttribute("aria-hidden", mobileQuery.matches ? "true" : "false");
+    if (mobileQuery.matches) {
+      nav.setAttribute("aria-hidden", "true");
+    }
     var menuIsOpen = function () {
       return navToggle.getAttribute("aria-expanded") === "true";
     };
@@ -149,31 +151,37 @@
      Scrollspy for the main navigation
      ---------------------------------------------------------------------- */
   var navLinks = $$(".site-nav__link");
-  var navSections = navLinks
-    .map(function (link) {
-      var id = link.getAttribute("href");
-      return id && id.charAt(0) === "#" ? $(id) : null;
-    })
-    .filter(Boolean);
+  var linkBySection = {};
 
-  if ("IntersectionObserver" in window && navSections.length) {
+  navLinks.forEach(function (link) {
+    var href = link.getAttribute("href");
+    var target = href && href.charAt(0) === "#" ? $(href) : null;
+    var section = target && target.closest("section");
+    if (section && section.id) linkBySection[section.id] = link;
+  });
+
+  var spySections = $$("main > section");
+
+  if ("IntersectionObserver" in window && spySections.length) {
+    var setActiveLink = function (activeLink) {
+      navLinks.forEach(function (link) {
+        link.classList.toggle("is-active", link === activeLink);
+      });
+    };
+
     var spy = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
           if (!entry.isIntersecting) return;
-          var id = "#" + entry.target.id;
-          navLinks.forEach(function (link) {
-            link.classList.toggle(
-              "is-active",
-              link.getAttribute("href") === id
-            );
-          });
+          // Sections without a nav item (hero, trust strip, FAQ) clear the
+          // highlight instead of leaving the previous link stuck on.
+          setActiveLink(linkBySection[entry.target.id] || null);
         });
       },
       { rootMargin: "-42% 0px -52% 0px", threshold: 0 }
     );
 
-    navSections.forEach(function (section) {
+    spySections.forEach(function (section) {
       spy.observe(section);
     });
   }
@@ -288,7 +296,7 @@
         case "date":
           if (!value) {
             message = "Please choose a preferred date.";
-          } else if (value < today) {
+          } else if (value < localISODate()) {
             message = "Please choose today or a future date.";
           }
           break;
@@ -409,12 +417,18 @@
 
       // Open WhatsApp from the submit gesture. The success panel also offers
       // a link in case the browser blocks the new tab.
-      var whatsappWindow = window.open(
-        whatsappUrl,
-        "_blank",
-        "noopener,noreferrer"
-      );
-      if (!whatsappWindow) {
+      // Do not pass "noopener" in the features string: window.open() then
+      // always returns null, which made the blocked-popup fallback below run
+      // on every submit and navigate this tab away as well. Sever the opener
+      // link manually instead.
+      var whatsappWindow = window.open(whatsappUrl, "_blank");
+      if (whatsappWindow) {
+        try {
+          whatsappWindow.opener = null;
+        } catch (error) {
+          /* Cross-origin access can throw; the link is already severed. */
+        }
+      } else {
         // Popup blockers commonly prevent scripted new tabs. Continue to the
         // prefilled request in the current tab as a best-effort handoff.
         window.location.assign(whatsappUrl);
